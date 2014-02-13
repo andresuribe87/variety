@@ -200,7 +200,7 @@ db[collection].find(query).sort({_id: -1}).limit(limit).forEach(function(obj) {
 });
 
 print('Finished analysis. Results:');
-print(varietyResults);
+print(tojson(varietyResults));
 // var resultsDB = db.getMongo().getDB("varietyResults");
 // var resultsCollectionName = collection + "Keys";
 
