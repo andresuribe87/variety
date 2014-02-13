@@ -199,46 +199,48 @@ db[collection].find(query).sort({_id: -1}).limit(limit).forEach(function(obj) {
   addVarietyResults(recordResult);
 });
 
-var resultsDB = db.getMongo().getDB("varietyResults");
-var resultsCollectionName = collection + "Keys";
+print('Finished analysis. Results:');
+print(varietyResults);
+// var resultsDB = db.getMongo().getDB("varietyResults");
+// var resultsCollectionName = collection + "Keys";
 
-// replace results collection
-print("creating results collection: "+resultsCollectionName);
-resultsDB[resultsCollectionName].drop();
-for(result in varietyResults) {
-  resultsDB[resultsCollectionName].insert(varietyResults[result]); 
-}
+// // replace results collection
+// print("creating results collection: "+resultsCollectionName);
+// resultsDB[resultsCollectionName].drop();
+// for(result in varietyResults) {
+//   resultsDB[resultsCollectionName].insert(varietyResults[result]); 
+// }
 
-var numDocuments = db[collection].count();
+// var numDocuments = db[collection].count();
 
-print("removing leaf arrays in results collection, and getting percentages");
-resultsDB[resultsCollectionName].find({}).forEach(function(key) {
-  var keyName = key["_id"].key;
+// print("removing leaf arrays in results collection, and getting percentages");
+// resultsDB[resultsCollectionName].find({}).forEach(function(key) {
+//   var keyName = key["_id"].key;
   
-  // We throw away keys which end in an array index, since they are not useful
-  // for our analysis. (We still keep the key of their parent array, though.) -JC
-  if(keyName.match(/\.XX$/)) {
-    resultsDB[resultsCollectionName].remove({ "_id" : key["_id"]});
-    return;
-  }
+//   // We throw away keys which end in an array index, since they are not useful
+//   // for our analysis. (We still keep the key of their parent array, though.) -JC
+//   if(keyName.match(/\.XX$/)) {
+//     resultsDB[resultsCollectionName].remove({ "_id" : key["_id"]});
+//     return;
+//   }
 
-  if(keyName.match(/\.XX/)) {
-    // exists query checks for embedded values for an array 
-    // ie. match {arr:[{x:1}]} with {"arr.x":{$exists:true}}
-    // just need to pull out .XX in this case
-    keyName = keyName.replace(/.XX/g,"");    
-  }
-  // we don't need to set it if limit isn't being used. (it's set above.)
-  if(limit < numDocuments) {
-    var existsQuery = {};
-    existsQuery[keyName] = {$exists: true};
-    key.totalOccurrences = db[collection].find(query).count(existsQuery);
-  }  
-  key.percentContaining = (key.totalOccurrences / numDocuments) * 100.0;
-  resultsDB[resultsCollectionName].save(key);
-});
+//   if(keyName.match(/\.XX/)) {
+//     // exists query checks for embedded values for an array 
+//     // ie. match {arr:[{x:1}]} with {"arr.x":{$exists:true}}
+//     // just need to pull out .XX in this case
+//     keyName = keyName.replace(/.XX/g,"");    
+//   }
+//   // we don't need to set it if limit isn't being used. (it's set above.)
+//   if(limit < numDocuments) {
+//     var existsQuery = {};
+//     existsQuery[keyName] = {$exists: true};
+//     key.totalOccurrences = db[collection].find(query).count(existsQuery);
+//   }  
+//   key.percentContaining = (key.totalOccurrences / numDocuments) * 100.0;
+//   resultsDB[resultsCollectionName].save(key);
+// });
 
-var sortedKeys = resultsDB[resultsCollectionName].find({}).sort({totalOccurrences: -1});
-sortedKeys.forEach(function(key) {
-  print(tojson(key, '', true));
-});
+// var sortedKeys = resultsDB[resultsCollectionName].find({}).sort({totalOccurrences: -1});
+// sortedKeys.forEach(function(key) {
+//   print(tojson(key, '', true));
+// });
