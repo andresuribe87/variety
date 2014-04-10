@@ -12,6 +12,10 @@ Released by Maypop Inc, © 2012, under the MIT License. */
 print("Variety: A MongoDB Schema Analyzer")
 print("Version 1.2.4, released 05 December 2013")
 
+
+
+
+
 var dbs = new Array();
 var emptyDbs = new Array();
 
